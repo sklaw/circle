@@ -15,13 +15,13 @@
 logger: Circle 45.1 started on Raspberry Pi Zero
 00:00:00.54 timer: SpeedFactor is 1.85
 00:00:00.54 kernel: Compile time: Feb 25 2023 15:03:24
-Task main is running
-Task main is running
-Task main is running
-Task main is running
-Task main is running
-Task main is running
-Task main is running
+Task main is running.
+Task main is running.
+Task main is running.
+Task main is running.
+Task main is running.
+Task main is running.
+Task main is running.
 ```
 
 - After we implement preemptive multitasking (initiated by timer interrupt), the output should show four tasks concurrently running (main task, task A, task B, and task C):
@@ -30,17 +30,17 @@ logger: Circle 45.1 started on Raspberry Fi Zero
 00:00:00.54 timer: SpeedFactor is 1.85
 00:00:00.54 kernel: Compile time: Feb 25 2023 15:03:24
 Task main is running.
-00:00:01.54 sched: Current task is task main, will switch to task A
-Task A is ruming.
+00:00:01.54 sched: Current task is task main, will switch to task A.
+Task A is running.
 DO:00:02.54 sched: Current task is task A, will switch to task B.
-Task R is ruming.
+Task R is running.
 00:00:03.54 sched: Current task is task B, will switch to task C.
 Task C is running.
-00:00:04.54 sched: Current task is task C, will switch to task main
-Task main is running
-Task main is rumino.
-00:00:05 54 sched: Current task is task main, will switch to task A
-Task A is running
+00:00:04.54 sched: Current task is task C, will switch to task main.
+Task main is running.
+Task main is running.
+00:00:05 54 sched: Current task is task main, will switch to task A.
+Task A is running.
 Task A is running.
 ```
 
