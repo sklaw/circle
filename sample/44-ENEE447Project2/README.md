@@ -33,7 +33,7 @@ Task main is running.
 00:00:01.54 sched: Current task is task main, will switch to task A.
 Task A is running.
 DO:00:02.54 sched: Current task is task A, will switch to task B.
-Task R is running.
+Task B is running.
 00:00:03.54 sched: Current task is task B, will switch to task C.
 Task C is running.
 00:00:04.54 sched: Current task is task C, will switch to task main.
