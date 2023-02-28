@@ -60,15 +60,15 @@ _start:
 	mcr	p15, 0, r0, c12, c0, 0		/* reset VBAR (if changed by u-boot) */
 #endif
 	cps	#0x11				/* set fiq mode */
-	ldr	sp, =MEM_FIQ_STACK
+	ldr	sp, =MEM_FIQ_STACK // Here, sp is r13_fiq not r13.
 	cps	#0x12				/* set irq mode */
-	ldr	sp, =MEM_IRQ_STACK
+	ldr	sp, =MEM_IRQ_STACK  // Here, sp is r13_irq not r13.
 	cps	#0x17				/* set abort mode */
-	ldr	sp, =MEM_ABORT_STACK
+	ldr	sp, =MEM_ABORT_STACK  // Here, sp is r13_abt not r13.
 	cps	#0x1B				/* set "undefined" mode */
-	ldr	sp, =MEM_ABORT_STACK
+	ldr	sp, =MEM_ABORT_STACK  // Here, sp is r13_undef not r13.
 	cps	#0x1F				/* set system mode */
-	ldr	sp, =MEM_KERNEL_STACK
+	ldr	sp, =MEM_KERNEL_STACK // Here, sp is r13.
 	b	sysinit
 
 #if RASPPI != 1
