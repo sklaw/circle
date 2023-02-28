@@ -9,7 +9,7 @@
 - **NOTE**: For this project, our code will target qemu-emulated Raspberry Pi Zero (which means the code may not run on your real physical Pi). 
 	- Read FAQ1 in project 1 to learn how to run qemu-emulated Raspberry Pi Zero on your computer.
 
-## Specifically, we are tring to solve the following problem:
+## Specifically, we are trying to solve the following problem:
 - Currently, when we run this sample, the output shows only main task is running:
 ```
 logger: Circle 45.1 started on Raspberry Pi Zero
@@ -44,7 +44,7 @@ Task A is running.
 Task A is running.
 ```
 
-## Specifically, you are suppose to do the following:
+## Specifically, you are supposed to do the following:
 1. Read the [`Run` function in `kernel.cpp`](kernel.cpp#L78-L116) and the [`Run` function in `testtask.cpp`](testtask.cpp#L17-L34).
 	- Note that, compared to project 1, none of these tasks in project 2 would call `Yield` (and they run forever in a `while(1)` loop). This means multitasking among them can't be achieved through cooperative multitasking because they never yield and never exit. Therefore, to achieve multitasking in project 2, we need preemptive multitasking. 
 1. The starting point of preemptive multitasking is [the call to `EnablePreemptiveMultitasking` in `kernel.cpp`](kernel.cpp#L98-L99). Read [the definition of `EnablePreemptiveMultitasking` in `scheduler.cpp`](../../lib/sched/scheduler.cpp#L466-L480).
