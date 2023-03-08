@@ -156,15 +156,13 @@ do_context_switch_on_irq_return:
 
 	// Here is what we are going to do next:
 	//   1. We will save the context (registers) of the interrupted task on the stack.
-	//     - specifically, we need to save r0-r15, d0-d15, fpexc, and fpscr 
-	//       of the interrupted task. We don't need to save its cpsr for this project
-	//       because all tasks have the same cpsr (they all run in system mode with IRQ
-	//       interrupt enabled).
+	//     - specifically, we need to save r0-r15, d0-d15, fpexc, fpscr, and cpsr
+	//       of the interrupted task. 
 	//   2. When we save the registers on the stack, we will organize them in a way such that
 	//      we can manipulate them later in C code as a `struct TTaskRegisters` (read the struct 
 	//      declaration in include/circle/sched/taskswitch.h).
 	//     - Specifically, this means, we need to store the registers declared in
-	//       `struct TTaskRegisters` consecutively on the stack, with the first field (fpexc)
+	//       `struct TTaskRegisters` consecutively on the stack, with the first field (cpsr)
 	//       stored at the lowest memory address and the last filed (pc) stored at
 	//       the highest memory address.
 
@@ -186,6 +184,11 @@ do_context_switch_on_irq_return:
 	sub	sp, sp, #8
 	// TODO: Save interrupted task's fpexc and fpscr in alloated space
 
+	// Allocate space on stack for saving interrupted task's cpsr
+	sub	sp, sp, #4
+	// Save interrupted task's cpsr which is currently in spsr_irq 
+	// mrs r0, spsr // Uncomment this line after you have implemented all the TODOs in this file
+	// stmia sp, {r0} // Uncomment this line after you have implemented all the TODOs in this file
 
 	
 	// Next, we call the function `ContextSwitchOnIrqReturn_by_modifyingTaskContextSavedByIrqStub`
@@ -203,6 +206,13 @@ do_context_switch_on_irq_return:
 	//   been replaced with the context of the next task.
 	
 	// What we will do next is to restore the context of the next task.
+
+
+	// Restore next task's cpsr into spsr_irq (hint: look up MSR instruction)
+	// ldmia sp, {r0} // Uncomment this line after you have implemented all the TODOs in this file
+	// msr spsr_cxsf, r0 // Uncomment this line after you have implemented all the TODOs in this file
+	// Deallocate space previosuly allocated for saving cpsr
+	add	sp, sp, #4
 
 	// TODO: Restore next task's fpexc and fpscr
 	

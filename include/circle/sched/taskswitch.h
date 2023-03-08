@@ -37,6 +37,7 @@ extern "C" {
 //   any time.
 struct TTaskRegisters
 {
+	u32	cpsr;
 	u32	fpexc;
 	u32	fpscr;
 	u64	d[16];

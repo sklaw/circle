@@ -146,6 +146,8 @@ void CTask::InitializeRegs (void)
 	m_Regs.fpscr = VFP_FPSCR_DN;
 
 	m_Regs.pc = (u32) &TaskEntry;
+
+	m_Regs.cpsr = (u32)0x1F; // Kernel mode with IRQ interrupt enabled
 }
 
 #else
