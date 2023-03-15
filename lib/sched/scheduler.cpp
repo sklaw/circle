@@ -349,6 +349,7 @@ unsigned CScheduler::GetNextTask (void)
 		CTask *pTask = m_pTask[i];
 		if (pTask == 0)
 		{
+			removed_count++;
 			continue;
 		}
 		if (pTask->GetState() == TaskStateTerminated) {
