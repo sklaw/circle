@@ -37,14 +37,26 @@ Specifically, this means:
   - TODOs in [`task.cpp`](../../lib/sched/task.cpp#L204-L249)
   
 ### Problem 2: ...(Under construction)
+- So at the end of problem 1, we have the user task running but there is no output.
+- But the user task should have output. See its definition [here](user_mode_task/main.c).
+- The reason why there is no output is because all the [system calls used by the user task are not yet implemented](/user_mode_task/my_c_library.c#L43-L81).
+- After the system calls are implemented, the output should look like this:
+
+<img src="img/project 4 after impl syscall_user task now runs and print.png" width="500">
+
+#### Specifically, to solve problem 2, you are supposed to do the following:
+- Implement the following TODOs:
+  - TODOs in [`exceptionstub.S`](../../lib/exceptionstub.S#L76-L88)
+  - TODOs in [`syscallhandler.cpp`](../../lib/syscallhandler.cpp#L10)
 
 ## What to submit on ELMS before your lab in the week of May 1 (you have 3 weeks):
 1. A pdf that has:
 	- Members of your group.
 	- A screenshot/photo that shows problem 1 is solved.
 	- A screenshot/photo that shows problem 2 is solved.
-1. ... (TBD)
-1. ... (TBD)
+1. `task.cpp` in which you have implemented the TODOs.
+1. `exceptionstub.S` in which you have implemented the TODOs.
+1. `syscallhandler.cpp` in which you have implemented the TODOs.
 
 ## Documents for reference
 - [1] [ARM Architecture Reference Manual](https://documentation-service.arm.com/static/5f8dacc8f86e16515cdb865a)
