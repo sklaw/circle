@@ -36,10 +36,10 @@ Specifically, this means:
 - Implement the following TODOs:
   - TODOs in [`task.cpp`](../../lib/sched/task.cpp#L204-L249)
   
-### Problem 2: ...(Under construction)
+### Problem 2: Implement system calls so that the user task can trap into kernel mode and do privilledged things
 - So at the end of problem 1, we have the user task running but there is no output.
 - But the user task should have output. See its definition [here](user_mode_task/main.c).
-- The reason why there is no output is because all the [system calls used by the user task are not yet implemented](/user_mode_task/my_c_library.c#L43-L81).
+- The reason why there is no output is because all the [system calls used by the user task are not yet implemented](user_mode_task/my_c_library.c#L43-L81).
 - After the system calls are implemented, the output should look like this:
 
 <img src="img/project 4 after impl syscall_user task now runs and print.png" width="500">
