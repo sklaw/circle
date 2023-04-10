@@ -21,7 +21,7 @@ Specifically, this means:
 
 ## Specifically, we are trying to solve the following two problems:
 
-### Before you start, copy your project 3 solution to [here](../../lib/sched/task.cpp#L204-L249) and [here](../../lib/sched/scheduler.cpp#L1).
+### Before you start, copy your project 3 solution to [here](../../lib/sched/taskswitch.S#L27-L30) and [here](../../lib/sched/scheduler.cpp#L1).
 
 ### Problem 1: Set up virtual memory for the user mode task.
 - Currently, when we run this sample, it will have an error:
