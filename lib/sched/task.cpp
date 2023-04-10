@@ -21,6 +21,16 @@
 #include <circle/sched/scheduler.h>
 #include <circle/util.h>
 #include <assert.h>
+#include <circle/logger.h>
+#include <circle/memory.h>
+#include <circle/alloc.h>
+#include <circle/user_task_exe.h>
+
+#if AARCH == 32
+	#include <circle/armv6mmu.h>
+#else
+	#error "64-bit ARM not supported!"
+#endif
 
 CTask::CTask (unsigned nStackSize, boolean bCreateSuspended)
 :	m_State (bCreateSuspended ? TaskStateNew : TaskStateReady),
@@ -43,6 +53,7 @@ CTask::CTask (unsigned nStackSize, boolean bCreateSuspended)
 		assert ((m_nStackSize & 15) == 0);
 #endif
 		m_pStack = new u8[m_nStackSize];
+		
 		assert (m_pStack != 0);
 
 		InitializeRegs ();
@@ -58,6 +69,7 @@ CTask::~CTask (void)
 	assert (m_State == TaskStateTerminated);
 
 	m_State = TaskStateUnknown;
+
 	delete [] m_pStack;
 	m_pStack = 0;
 }
@@ -149,6 +161,9 @@ void CTask::InitializeRegs (void)
 	m_Regs.pc = (u32) &TaskEntry;
 
 	m_Regs.cpsr = (u32)0x1F; // Kernel mode with IRQ interrupt enabled
+
+	m_Regs.contextid = (u32)this; // Use the addr of this CTask instance as context id.
+	m_Regs.ttbr0 = readTTBR0(); // Use kernel page table for this task.
 }
 
 #else
@@ -178,10 +193,87 @@ void CTask::TaskEntry (void *pParam)
 
 	pThis->Run ();
 
+	DisableIRQs();
 	pThis->m_State = TaskStateTerminated;
-
 	pThis->m_Event.Set ();
 	CScheduler::Get ()->Yield ();
-
 	assert (0);
 }
+
+
+CUserModeTask::CUserModeTask(const char *exe_path)
+: CTask(TASK_STACK_SIZE, TRUE)
+{
+	u32 *pTable = (u32*)((int)m_mem_to_contain_pTable & ~(0x4000-1)) + 0x4000;
+	m_pPageTable = new CPageTable (pTable, CMemorySystem::Get()->GetKernelPageTable());
+	assert (m_pPageTable != 0);
+
+	// NOTE: In this project, the ARM virtual memory system uses pages of 1MB.
+	// 	 The page table entry uses the "Section" format of [1]'s
+	//	 "Table B4-2 First-level descriptor format (VMSAv6, subpages disabled)"
+
+	// TODO: Set up ttbr0, pc, sp, cpsr properly for the user mode task.
+	// Hint:
+	//   - For ttbr0, read "B4.9.3 Register 2: Translation table base" to learn ttbr0's format.
+	//     - You may find `m_pPageTable->GetBaseAddress();` helpful.
+	//   - For pc, you need to find out what user_mode_task_exe's expected load address should be
+	//     and set pc to that address.
+	//     - Read `sample/46-ENEE447Project4/user_mode_task/Makefile` to find out this information.
+	//   - For sp, you are free choose an address that is not unused by kernel or the exe's sections.
+	//     - Google "process memory layout" to learn what a typical layout looks like.
+	//   - For cpsr, you need to make sure it's user mode and IRQ interrupt is enabled.
+
+	void *physical_page_1_baseaddr = CMemorySystem::Get()->UserModeTaskPageAllocate();	
+	void *physical_page_2_baseaddr = CMemorySystem::Get()->UserModeTaskPageAllocate();	
+	assert(physical_page_1_baseaddr != 0);
+	assert(physical_page_2_baseaddr != 0);
+
+	// NOTE: Normally, if we have a functioning file system, the following line 
+	//       would be a file read operation which reads the binary file at 
+	//	 `exe_path` from disk into memory. 
+	//
+	//	 Since we don't have a functioning file system, we will 
+	//	 use the following hack to pretend we had read the file somehow
+	//	 into the char array `user_mode_task_exe`.
+	//
+	//	 We also assume the binary file size is always <= 1MB so that we only
+	//	 need to copy it into one physical page.
+	memcpy(physical_page_1_baseaddr, user_mode_task_exe, user_mode_task_exe_len);
+
+	u32 *pageTable = m_pPageTable->GetPageTable();
+	// TODO: Set up page table entries properly for the user mode task.
+	// Hint: Read `lib/pagetable.cpp` line 63-93 to see how page table entries
+	//       used by the kernel are set up.
+
+	Start();
+}
+
+CUserModeTask::~CUserModeTask(void) {
+	u32 *pageTable = m_pPageTable->GetPageTable();
+
+	// TODO: Deallocate the physical pages of this task.
+	// Hint: You can do something like:
+	//         void *physical_page_1_baseaddr = ...
+	//         void *physical_page_2_baseaddr = ...
+	//         CMemorySystem::Get()->UserModeTaskPageFree(physical_page_1_baseaddr);
+	//         CMemorySystem::Get()->UserModeTaskPageFree(physical_page_2_baseaddr);
+}
+
+void CUserModeTask::Run(void) {
+	// This  function should never run in a user mode task.
+	assert(0);
+}
+
+
+int save_user_sp_and_get_kernel_sp(u32 user_sp) {
+	CUserModeTask* pUserModeTask = (CUserModeTask*)(CScheduler::Get()->GetCurrentTask());
+	pUserModeTask->user_sp = user_sp;
+	return pUserModeTask->kernel_sp;
+}
+
+extern "C" int get_saved_user_sp() {
+	CUserModeTask* pUserModeTask = (CUserModeTask*)(CScheduler::Get()->GetCurrentTask());
+	return pUserModeTask->user_sp;
+}
+
+

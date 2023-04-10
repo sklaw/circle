@@ -27,21 +27,29 @@ TaskSwitch:
 	// TODO: delete the instruction below: 
 	bx	lr
 
-	// TODO: Implement `TaskSwitch`
-	// Hint: 
-	// We actually don't need to write a lot of codes here because 
-	// a working design of context switch has been implemented in 
-	// project 2 (See `__contextswitch_impl` in `lib/exceptionstub.S`).
-	// 
-	// However, we cannot just jump to `__contextswitch_impl` here because
-	// some assumptions held by `__contextswitch_impl` are not satisfied yet.
-	//
-	// Therefore, we need to do the following:
-	//	- Identify what assumptions held by `__contextswitch_impl` must 
-	// 	  be satisfied before we jump to `__contextswitch_impl`.
-	//	- Write codes here so that the assumptions are satisfied.
-	//	- Jump to __contextswitch_impl.
+	// TODO: Copy your working project 3 solution to here.
 
+
+
+	.global readTTBR0
+readTTBR0:
+	MRC		p15, 0, r0, c2, c0, 0 		@ Read 32-bit TTBR0 into r0
+	bx		lr
+
+	.global writeTTBR0
+writeTTBR0:
+	MCR		p15, 0, r0, c2, c0, 0 		@ Write r0 to 32-bit TTBR0
+	bx		lr
+
+	.global readCONTEXTIDR
+readCONTEXTIDR:
+	MRC		p15, 0, r0, c13, c0, 1 		@ Read CONTEXTIDR into Rt
+	bx		lr
+
+	.global writeCONTEXTIDR
+writeCONTEXTIDR:
+	MCR		p15, 0, r0, c13, c0, 1 		@ Write Rt to CONTEXTIDR
+	bx		lr
 #else
 
 	.globl	TaskSwitch

@@ -60,6 +60,9 @@ public:
 
 	static CMemorySystem *Get (void);
 
+	const CPageTable* GetKernelPageTable(void) const {
+		return m_pPageTable;
+	}
 public:
 	static void *HeapAllocate (size_t nSize, int nType)
 #define HEAP_LOW	0		// memory below 1 GB
@@ -145,6 +148,24 @@ public:
 	static void *PageAllocate (void)	{ return s_pThis->m_Pager.Allocate (); }
 	static void PageFree (void *pPage)	{ s_pThis->m_Pager.Free (pPage); }
 
+
+	static void *UserModeTaskPageAllocate(void) {
+		for (int i = 0; i < MAX_USER_MODE_TASK_PAGES; i++) {
+			if (s_pThis->m_free_user_mode_task_page_bitmap[i] == 0) {
+				s_pThis->m_free_user_mode_task_page_bitmap[i] = 1;
+				return (void*)(USER_MODE_TASK_PAGE_START + i * MEGABYTE);
+			}
+		}
+		return 0;
+	}
+
+	static void UserModeTaskPageFree(void *p) {
+		assert(((int)p& (MEGABYTE-1)) == 0);
+		int i = ((int)p-USER_MODE_TASK_PAGE_START)/MEGABYTE;
+		assert(s_pThis->m_free_user_mode_task_page_bitmap[i] == 1);
+		s_pThis->m_free_user_mode_task_page_bitmap[i] = 0;
+	}
+
 	static void DumpStatus (void)
 	{
 #ifdef HEAP_DEBUG
@@ -172,6 +193,7 @@ private:
 	CHeapAllocator m_HeapHigh;
 #endif
 	CPageAllocator m_Pager;
+	int m_free_user_mode_task_page_bitmap[MAX_USER_MODE_TASK_PAGES] = {0};
 
 #if AARCH == 32
 	CPageTable *m_pPageTable;

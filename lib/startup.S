@@ -63,6 +63,8 @@ _start:
 	ldr	sp, =MEM_FIQ_STACK
 	cps	#0x12				/* set irq mode */
 	ldr	sp, =MEM_IRQ_STACK
+	cps	#0x13				/* set svc mode */
+	ldr	sp, =MEM_SVC_STACK
 	cps	#0x17				/* set abort mode */
 	ldr	sp, =MEM_ABORT_STACK
 	cps	#0x1B				/* set "undefined" mode */

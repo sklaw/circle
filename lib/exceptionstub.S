@@ -71,6 +71,23 @@ UndefinedInstructionStub:
 	fmxr	fpexc, r0
 	ldmfd	sp!, {r0, pc}^			/* restore registers and return */
 
+// Added by TA for project 4.
+	.globl	SVCStub
+SVCStub:
+	// Our syscall calling convention:
+	//   r0-r3: syscall arguments. This means we require a syscall can at most have 4 arguments.
+	//   r7: syscall number
+
+	// TODO: Delete the following line
+	movs	pc, lr
+
+	// TODO: Implement SVCStub so that system call works
+	// Hint: Read "A2.6.4 Software Interrupt exception" in [1] 
+	//       to learn what happens when SVCStub is called.
+	// Hint: You may find `SyscallHandler` in 
+	//      'lib/syscallhandler.cpp` helpful (to some extent).
+
+
 /*
  * IRQ stub
  */
@@ -124,9 +141,68 @@ __contextswitch_impl:
 	sub	sp, sp, #4
 	stmia	sp, {lr}
 
-	// TODO: Copy your working project 2 solution to here
-	// (TAs will publish project 2 solution later after 
-	// all lab sections have concluded project 2)
+	sub	sp, sp, #60
+	stmia	sp, {r0-r14}^
+
+	sub	sp, sp, #128
+	vstmia	sp, {d0-d15}
+
+	sub	sp, sp, #8
+	vmrs	r2, fpexc
+	vmrs	r3, fpscr
+	stmia	sp, {r2, r3}
+
+	sub	sp, sp, #4
+	mrs	r0, spsr
+	stmia	sp, {r0}
+
+	sub	sp, sp, #4
+	bl	readTTBR0
+	stmia	sp, {r0}
+
+	sub	sp, sp, #4
+	bl	readCONTEXTIDR
+	stmia	sp, {r0}
+
+	mov	r0, sp
+	bl	ContextSwitchOnIrqReturn_by_modifyingTaskContextSavedByIrqStub
+
+	mov	r0, #0
+
+	mcr p15, 0, r0, c7, c10, 4 // DataSyncBarrier
+	mcr p15, 0, r0, c7, c10, 5 // DataMemBarrier
+	mcr 	p15, 0, r0, c7, c5,  4 // PrefetchFlush
+
+	// Switch to new ASID and TTBR0	based on B2.7.6, Synchronization of changes of ASID and TTBR, Example solution
+	mcr	p15, 0, r0, c13, c0, 1 // Write 0 to contextid
+	mcr 	p15, 0, r0, c7, c5,  4 // PrefetchFlush
+
+	ldmia	sp, {r1} // r1 holds contextid
+	add	sp, sp, #4
+
+	ldmia	sp, {r2} // r2 holds ttbr0
+	add	sp, sp, #4
+
+	mcr	p15, 0, r2, c2, c0, 0 // Write ttbr0
+	mcr 	p15, 0, r0, c7, c5,  4 // PrefetchFlush
+
+	mcr	p15, 0, r1, c13, c0, 1 // Write contextid
+
+
+	ldmia	sp, {r0}
+	msr	spsr_cxsf, r0
+	add	sp, sp, #4
+
+	ldmia	sp, {r2, r3}
+	vmsr	fpexc, r2
+	vmsr	fpscr, r3
+	add	sp, sp, #8
+
+	vldmia	sp, {d0-d15}
+	add	sp, sp, #128
+
+	ldmia	sp, {r0-r14}^
+	add	sp, sp, #60
 
 	ldmia	sp!, {pc}^
 
@@ -236,3 +312,8 @@ SMCStack:
 #endif
 
 /* End */
+
+
+
+
+

@@ -37,6 +37,8 @@ extern "C" {
 //   any time.
 struct TTaskRegisters
 {
+	u32	contextid;
+	u32	ttbr0;
 	u32	cpsr;
 	u32	fpexc;
 	u32	fpscr;
@@ -59,6 +61,12 @@ struct TTaskRegisters
 	u32	pc; // r15
 }
 PACKED;
+
+int readTTBR0(void);
+void writeTTBR0(int val);
+
+int readCONTEXTIDR(void);
+void writeCONTEXTIDR(int val);
 
 #else
 

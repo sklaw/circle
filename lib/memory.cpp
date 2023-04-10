@@ -27,6 +27,7 @@
 #include <circle/spinlock.h>
 #include <circle/sysconfig.h>
 #include <assert.h>
+#include <circle/logger.h>
 
 #if RASPPI == 1
 #define MMU_MODE	(  ARM_CONTROL_MMU			\

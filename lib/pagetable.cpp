@@ -48,6 +48,19 @@
 
 #if RASPPI <= 3
 
+CPageTable::CPageTable(u32 *pTable, const CPageTable *copyfrom)
+:	m_pTable(pTable)
+{
+	assert (((u32) m_pTable & 0x3FFF) == 0);
+
+	for (unsigned nEntry = 0; nEntry < 4096; nEntry++)
+	{
+		m_pTable[nEntry] = copyfrom->m_pTable[nEntry];
+	}
+
+	CleanDataCache ();
+}
+
 CPageTable::CPageTable (u32 nMemSize)
 :	m_pTable ((u32 *) MEM_PAGE_TABLE1)
 {

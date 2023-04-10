@@ -29,10 +29,11 @@ OBJS	= actled.o alloc.o assert.o bcmframebuffer.o bcmmailbox.o \
 	  string.o sysinit.o time.o timer.o tracer.o usertimer.o util.o \
 	  util_fast.o virtualgpiopin.o chainboot.o macaddress.o netdevice.o \
 	  new.o heapallocator.o pageallocator.o setjmp.o numberpool.o \
-	  latencytester.o writebuffer.o 2dgraphics.o smimaster.o ptrlistfiq.o
+	  latencytester.o writebuffer.o 2dgraphics.o smimaster.o ptrlistfiq.o \
+	  syscallhandler.o
 
 OBJS32	= cache-v7.o exceptionhandler.o exceptionstub.o memory.o pagetable.o \
-	  startup.o synchronize.o
+	  startup.o synchronize.o 
 
 OBJS64	= exceptionhandler64.o exceptionstub64.o memory64.o startup64.o \
 	  synchronize64.o translationtable64.o

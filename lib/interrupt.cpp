@@ -85,6 +85,9 @@ boolean CInterruptSystem::Initialize (void)
 #if AARCH == 32
 	TExceptionTable *pTable = (TExceptionTable *) ARM_EXCEPTION_TABLE_BASE;
 	pTable->IRQ = ARM_OPCODE_BRANCH (ARM_DISTANCE (pTable->IRQ, IRQStub));
+
+	// Added by TA for project 4
+	pTable->SupervisorCall =  ARM_OPCODE_BRANCH (ARM_DISTANCE (pTable->SupervisorCall, SVCStub));
 #ifndef USE_RPI_STUB_AT
 	pTable->FIQ = ARM_OPCODE_BRANCH (ARM_DISTANCE (pTable->FIQ, FIQStub));
 #endif

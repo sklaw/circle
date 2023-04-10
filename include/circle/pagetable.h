@@ -27,10 +27,13 @@
 class CPageTable
 {
 public:
+	CPageTable(u32 *pTable, const CPageTable *copyfrom);
 	CPageTable (u32 nMemSize);
 	~CPageTable (void);
 
 	u32 GetBaseAddress (void) const;	// with mode bits to be loaded into TTBRn
+
+	u32 *GetPageTable(void) const {return m_pTable;}
 	
 private:
 	u32 *m_pTable;

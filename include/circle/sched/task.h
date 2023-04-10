@@ -25,6 +25,14 @@
 #include <circle/sysconfig.h>
 #include <circle/string.h>
 #include <circle/types.h>
+#if AARCH == 32
+	#include <circle/pagetable.h>
+#else
+	#error "64-bit ARM not supported!"
+#endif
+
+extern "C" int save_user_sp_and_get_kernel_sp(u32 user_sp);
+extern "C" int get_saved_user_sp();
 
 // Added by TA for implementing preemptive multitasking.
 extern "C" void ContextSwitchOnIrqReturn_by_modifyingTaskContextSavedByIrqStub(TTaskRegisters* regs_saved_by_irq_stub);
@@ -92,27 +100,30 @@ public:
 	/// \return Any user pointer, previously set with SetUserData()
 	void *GetUserData (unsigned nSlot);
 
+protected:
+	TTaskRegisters *GetRegs (void)		{ return &m_Regs; }
+	TTaskRegisters	    m_Regs;
+
 private:
+	void InitializeRegs (void);
 	TTaskState GetState (void) const	{ return m_State; }
 	void SetState (TTaskState State)	{ m_State = State; }
 
 	unsigned GetWakeTicks (void) const	{ return m_nWakeTicks; }
 	void SetWakeTicks (unsigned nTicks)	{ m_nWakeTicks = nTicks; }
 
-	TTaskRegisters *GetRegs (void)		{ return &m_Regs; }
 
 	friend class CScheduler;
 
 private:
-	void InitializeRegs (void);
 
 	static void TaskEntry (void *pParam);
+	static void UserModeTaskEntry(void *pParam);
 
 private:
 	volatile TTaskState m_State;
 	boolean		    m_bSuspended;
 	unsigned	    m_nWakeTicks;
-	TTaskRegisters	    m_Regs;
 	unsigned	    m_nStackSize;
 	u8		   *m_pStack;
 	CString		    m_Name;
@@ -122,6 +133,34 @@ private:
 
 	// Added by TA so that the function can access all member functions and variables of CScheduler
 	friend void ContextSwitchOnIrqReturn_by_modifyingTaskContextSavedByIrqStub(TTaskRegisters* regs_saved_by_irq_stub);
+
+	// Added by TA for running a task in user mode.
+	boolean m_bRunInUserMode;
+
+	friend int SyscallHandler(int arg1, int arg2, int arg3, int arg4);
+};
+
+class CUserModeTask : public CTask
+{
+public:
+	CUserModeTask(const char *exe_path);
+	~CUserModeTask(void);
+
+	void Run(void);
+
+private:
+#if AARCH == 32
+	u32 m_mem_to_contain_pTable[2*0x4000];
+	CPageTable *m_pPageTable;
+
+	u32 kernel_sp;
+	u32 user_sp;
+
+	friend int save_user_sp_and_get_kernel_sp(u32 user_sp);
+	friend int get_saved_user_sp();
+#else
+	#error "64-bit ARM not supported!"
+#endif
 };
 
 #endif

@@ -75,6 +75,7 @@ struct TAbortFrame
 void UndefinedInstructionStub (void);
 void PrefetchAbortStub (void);
 void DataAbortStub (void);
+void SVCStub (void); // Added by TA for project 4.
 void IRQStub (void);
 void FIQStub (void);
 void SMCStub (void);

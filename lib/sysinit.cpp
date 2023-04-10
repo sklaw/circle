@@ -211,7 +211,7 @@ void sysinit (void)
 
 	CMachineInfo MachineInfo;
 
-	CMemorySystem Memory;
+	CMemorySystem Memory(TRUE);
 
 #if RASPPI >= 4
 	MachineInfo.FetchDTB ();
