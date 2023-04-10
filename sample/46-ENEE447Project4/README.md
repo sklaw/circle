@@ -21,7 +21,7 @@ Specifically, this means:
 
 ## Specifically, we are trying to solve the following two problems:
 
-### Before you start, copy your project 3 solution to here and here.
+### Before you start, copy your project 3 solution to [here](../../lib/sched/task.cpp#L204-L249) and [here](../../lib/sched/scheduler.cpp#L1).
 
 ### Problem 1: Set up virtual memory for the user mode task.
 - Currently, when we run this sample, it will have an error:
@@ -34,9 +34,9 @@ Specifically, this means:
 
 #### Specifically, to solve problem 1, you are supposed to do the following:
 - Implement the following TODOs:
-  -
+  - TODOs in [`task.cpp`](../../lib/sched/task.cpp#L204-L249)
   
-### Problem 2: ...(TBD)
+### Problem 2: ...(Under construction)
 
 ## What to submit on ELMS before your lab in the week of May 1 (you have 3 weeks):
 1. A pdf that has:
