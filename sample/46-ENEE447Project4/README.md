@@ -3,13 +3,13 @@
 ## What are we doing in this project?
 In this project, we will try to run a task in user mode with its own virtual memory space.
 Specifically, this means:
-- The task won't be able to execute privilleged instructions.
+- The task won't be able to execute privileged instructions.
 - Multiple tasks can use the same memory region (for storing a task's binary codes, placing the task's stack, etc.) as long as their page tables map the memory region into different physical pages.
 
 ### Why do we want to do this?
 - [Principle of least privilege](https://en.wikipedia.org/wiki/Principle_of_least_privilege): User codes can be malicious or buggy. By limiting its privileges, we can limit the damage it can cause.
 - Better memory security: 
-  - Tasks can no longer access each other's memory because their page tables map their memory space into differeny physical pages.
+  - Tasks can no longer access each other's memory because their page tables map their memory space into different physical pages.
     - However, in some cases we do want tasks to share memory. For example:
       - If multiple tasks import the same library, we can save memory space by having one copy of the library in physical memory and make each task's page table map into it. This is called a [shared library](https://en.wikipedia.org/wiki/Library_(computing)#Shared_libraries).
       - Two tasks may want shared memory for [inter-process communication](https://en.wikipedia.org/wiki/Inter-process_communication).
@@ -36,7 +36,7 @@ Specifically, this means:
 - Implement the following TODOs:
   - TODOs in [`task.cpp`](../../lib/sched/task.cpp#L204-L260)
   
-### Problem 2: Implement system calls so that the user task can trap into kernel mode and do privilledged things
+### Problem 2: Implement system calls so that the user task can trap into kernel mode and do privileged things
 - At the end of problem 1, we have the user task running but there is no output.
 - But the user task should have output. See its definition [here](user_mode_task/main.c).
 - The reason why there is no output is because all the [system calls used by the user task are not yet implemented](user_mode_task/my_c_library.c#L43-L81).
