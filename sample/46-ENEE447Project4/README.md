@@ -34,7 +34,7 @@ Specifically, this means:
 
 #### Specifically, to solve problem 1, you are supposed to do the following:
 - Implement the following TODOs:
-  - TODOs in [`task.cpp`](../../lib/sched/task.cpp#L204-L249)
+  - TODOs in [`task.cpp`](../../lib/sched/task.cpp#L204-L260)
   
 ### Problem 2: Implement system calls so that the user task can trap into kernel mode and do privilledged things
 - At the end of problem 1, we have the user task running but there is no output.
