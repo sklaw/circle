@@ -25,10 +25,17 @@
 	.globl	TaskSwitch
 TaskSwitch:
 	// TODO: delete the instruction below: 
-	bx	lr
+
 
 	// TODO: Copy your working project 3 solution to here.
+	mrs r0, cpsr
+	mov r1, lr
+	cpsid i, #18
+	mov lr, r1
+	msr spsr, r0
 
+
+	b __contextswitch_impl
 
 
 	.global readTTBR0
