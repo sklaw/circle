@@ -1,4 +1,4 @@
-# Project 4 and 5: Running a task in user mode with its own virtual memory space
+# Project 4 (20 points): Running a task in user mode with its own virtual memory space
 
 ## What are we doing in this project?
 In this project, we will try to run a task in user mode with its own virtual memory space.
@@ -23,7 +23,7 @@ Specifically, this means:
 
 ### Before you start, copy your project 3 solution to [here](../../lib/sched/taskswitch.S#L27-L30) and [here](../../lib/sched/scheduler.cpp#L1).
 
-### Problem 1: Set up virtual memory for the user mode task.
+### Problem 1 (10 points): Set up virtual memory for the user mode task.
 - Currently, when we run this sample, it will have an error:
 
 <img src="img/project 4 after copying p3 sol_part 1 init state_Run called.png" width="500">
@@ -36,7 +36,7 @@ Specifically, this means:
 - Implement the following TODOs:
   - TODOs in [`task.cpp`](../../lib/sched/task.cpp#L204-L260)
   
-### Problem 2: Implement system calls so that the user task can trap into kernel mode and do privileged things
+### Problem 2 (10 points): Implement system calls so that the user task can trap into kernel mode and do privileged things
 - At the end of problem 1, we have the user task running but there is no output.
 - But the user task should have output. See its definition [here](user_mode_task/main.c).
 - The reason why there is no output is because all the [system calls used by the user task are not yet implemented](user_mode_task/my_c_library.c#L43-L81).
