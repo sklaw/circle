@@ -216,9 +216,9 @@ CUserModeTask::CUserModeTask(const char *exe_path)
 	// Hint:
 	//   - For ttbr0, read "B4.9.3 Register 2: Translation table base" to learn ttbr0's format.
 	//     - You may find `m_pPageTable->GetBaseAddress();` helpful.
-	//   - For pc, you need to find out what user_mode_task_exe's expected load address should be
+	//   - For pc, you need to find out what user_mode_task_exe's expected load address is
 	//     and set pc to that address.
-	//     - Read `sample/46-ENEE447Project4/user_mode_task/Makefile` to find out this information.
+	//     - Read `sample/46-ENEE447Project4/user_mode_task/a.lst` to find out this information.
 	//   - For sp, you are free choose an address that is not unused by kernel or the exe's binary.
 	//     - Google "process memory layout" to learn what a typical layout looks like.
 	//   - For cpsr, you need to make sure it's user mode and IRQ interrupt is enabled.
