@@ -46,7 +46,6 @@ Specifically, this means:
 
 #### Specifically, to solve problem 2, you are supposed to do the following:
 - Implement the following TODOs:
-  - TODOs in [`exceptionstub.S`](../../lib/exceptionstub.S#L76-L88)
   - TODOs in [`syscallhandler.cpp`](../../lib/syscallhandler.cpp#L10)
 
 ## What to submit on ELMS before your lab in the week of May 1 (you have 3 weeks):
@@ -55,7 +54,6 @@ Specifically, this means:
 	- A screenshot/photo that shows problem 1 is solved.
 	- A screenshot/photo that shows problem 2 is solved.
 1. `task.cpp` in which you have implemented the TODOs.
-1. `exceptionstub.S` in which you have implemented the TODOs.
 1. `syscallhandler.cpp` in which you have implemented the TODOs.
 
 ## Documents for reference
