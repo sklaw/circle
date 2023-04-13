@@ -204,8 +204,12 @@ void CTask::TaskEntry (void *pParam)
 CUserModeTask::CUserModeTask(const char *exe_path)
 : CTask(TASK_STACK_SIZE, TRUE)
 {
-	u32 *pTable = (u32*)((int)m_mem_to_contain_pTable & ~(0x4000-1)) + 0x4000;
-	m_pPageTable = new CPageTable (pTable, CMemorySystem::Get()->GetKernelPageTable());
+	// Create a page table for this user mode task. 
+	// The new page table is initialized as a copy of the page table used by kernel tasks.
+	m_pPageTable = new CPageTable (
+		(u32*)((int)m_mem_to_contain_pTable & ~(0x4000-1)) + 0x4000, // A hack that makes sure the page table is aligned to 16KB boundaries.
+		CMemorySystem::Get()->GetKernelPageTable()
+	);
 	assert (m_pPageTable != 0);
 
 	// NOTE: In this project, the ARM virtual memory system uses pages of 1MB.
