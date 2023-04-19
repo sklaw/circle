@@ -222,10 +222,13 @@ CUserModeTask::CUserModeTask(const char *exe_path)
 	//   - For sp, you are free choose an address that is not unused by kernel or the exe's binary.
 	//     - Google "process memory layout" to learn what a typical layout looks like.
 	//   - For cpsr, you need to make sure it's user mode and IRQ interrupt is enabled.
-	asm volatile ("mov ttbr0");
-	asm volatile ("mov pc, 0x80000000");
+	
+	writeTTBR0(*pTable);
+	asm volatile ("mov pc, #0x80000000");
+	asm volatile ("mov sp, #0x80000004");
 	EnableIRQs();
 	asm volatile ("CPS #16");
+
 	void *physical_page_1_baseaddr = CMemorySystem::Get()->UserModeTaskPageAllocate();	
 	void *physical_page_2_baseaddr = CMemorySystem::Get()->UserModeTaskPageAllocate();	
 	assert(physical_page_1_baseaddr != 0);
