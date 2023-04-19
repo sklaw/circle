@@ -75,17 +75,47 @@ UndefinedInstructionStub:
 	.globl	SVCStub
 SVCStub:
 	// Our syscall calling convention:
+	// Input:
 	//   r0-r3: syscall arguments. This means we require a syscall can at most have 4 arguments.
 	//   r7: syscall number
+	// Ouput:
+	//   r0: return value of the syscall.
 
-	// TODO: Delete the following line
-	movs	pc, lr
+	srsfd #0x1F! // Store SVC return addr and spsr to user stack
 
-	// TODO: Implement SVCStub so that system call works
-	// Hint: Read "A2.6.4 Software Interrupt exception" in [1] 
-	//       to learn what happens when SVCStub is called.
-	// Hint: You may find `SyscallHandler` in 
-	//      'lib/syscallhandler.cpp` helpful (to some extent).
+	stmfd	sp!, {r0-r3} // Save r0-r3 to SVC stack
+
+	stmfd	sp, {sp}^
+	sub	sp, #4
+	ldmfd	sp!, {r0}  // r0 = user stack
+
+	bl save_user_sp_and_get_kernel_sp
+
+	stmfd	sp!, {r0}
+	ldmfd	sp, {sp}^  // sp^ = kernel stack
+	add	sp, #4
+
+	ldmfd	sp!, {r0-r3} // Restore r0-r3 from SVC stack
+
+	cpsie i, 0x1F // Enter kernel mode with IRQ enabled.
+
+	stmfd	sp!, {lr} 
+	bl SyscallHandler
+	ldmfd	sp!, {lr}
+
+	cpsid i, 0x13  // Enter SVC mode with IRQ disabled.
+
+	stmfd	sp!, {r0} // Save r0 on SVC stack
+
+	bl get_saved_user_sp
+	stmfd	sp!, {r0}
+	ldmfd	sp, {sp}^  // sp^ = user stack
+	add	sp, #4
+
+	ldmfd	sp!, {r0} // Restore r0 from SVC stack
+
+	cps 0x1F // Enter kernel mode 
+	rfefd sp! // Use return addr and spsr previously saved on user stack.
 
 
 /*
@@ -140,6 +170,10 @@ do_context_switch_on_irq_return:
 __contextswitch_impl:
 	sub	sp, sp, #4
 	stmia	sp, {lr}
+
+	// TODO: Copy your working project 2 solution to here
+	// (TAs will publish project 2 solution later after 
+	// all lab sections have concluded project 2)
 
 	sub	sp, sp, #60
 	stmia	sp, {r0-r14}^

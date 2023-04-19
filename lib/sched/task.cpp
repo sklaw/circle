@@ -204,9 +204,18 @@ void CTask::TaskEntry (void *pParam)
 CUserModeTask::CUserModeTask(const char *exe_path)
 : CTask(TASK_STACK_SIZE, TRUE)
 {
-	u32 *pTable = (u32*)((int)m_mem_to_contain_pTable & ~(0x4000-1)) + 0x4000;
-	m_pPageTable = new CPageTable (pTable, CMemorySystem::Get()->GetKernelPageTable());
+	// Create a page table for this user mode task. 
+	// The new page table is initialized as a copy of the page table used by kernel tasks.
+	m_pPageTable = new CPageTable (
+		(u32*)((int)m_mem_to_contain_pTable & ~(0x4000-1)) + 0x4000, // A hack that makes sure the page table is aligned to 16KB boundaries.
+		CMemorySystem::Get()->GetKernelPageTable()
+	);
 	assert (m_pPageTable != 0);
+
+	const u32 *m_exe_load_addr = (u32*)0x80000000;
+	const u32 *m_user_stack_init_addr = (u32*)0x9FFFFFF0;
+
+	kernel_sp = m_Regs.sp;
 
 	// NOTE: In this project, the ARM virtual memory system uses pages of 1MB.
 	// 	 The page table entry uses the "Section" format of [1]'s
@@ -216,11 +225,8 @@ CUserModeTask::CUserModeTask(const char *exe_path)
 	// Hint:
 	//   - For ttbr0, read "B4.9.3 Register 2: Translation table base" to learn ttbr0's format.
 	//     - You may find `m_pPageTable->GetBaseAddress();` helpful.
-	//   - For pc, you need to find out what user_mode_task_exe's expected load address should be
-	//     and set pc to that address.
-	//     - Read `sample/46-ENEE447Project4/user_mode_task/Makefile` to find out this information.
-	//   - For sp, you are free choose an address that is not unused by kernel or the exe's binary.
-	//     - Google "process memory layout" to learn what a typical layout looks like.
+	//   - For pc, assign `m_exe_load_addr` to it.
+	//   - For sp, assign `m_user_stack_init_addr` to it.
 	//   - For cpsr, you need to make sure it's user mode and IRQ interrupt is enabled.
 	
 	writeTTBR0(*pTable);
@@ -247,9 +253,12 @@ CUserModeTask::CUserModeTask(const char *exe_path)
 	memcpy(physical_page_1_baseaddr, user_mode_task_exe, user_mode_task_exe_len);
 
 	u32 *pageTable = m_pPageTable->GetPageTable();
-	// TODO: Set up page table entries properly for the user mode task.
-	// Hint: Read `lib/pagetable.cpp` line 63-93 to see how page table entries
-	//       used by the kernel are set up.
+
+	int page_no_1 = 0xFFF; // TODO: figure out what this variable should be.
+	int page_no_2 = 0xFFF; // TODO: figure out what this variable should be.
+
+	pageTable[page_no_1] = (int)physical_page_1_baseaddr | 0xC0E;
+	pageTable[page_no_2] = (int)physical_page_2_baseaddr | 0xC1E;
 
 	Start();
 }
